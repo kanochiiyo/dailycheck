@@ -1,4 +1,4 @@
-package com.dimsseung.dailycheck.ui
+package com.dimsseung.dailycheck.ui.home
 
 import android.Manifest
 import android.content.Intent
@@ -35,11 +35,11 @@ class HomeActivity : AppCompatActivity() {
     //    membuat launcher yang minta permission itu
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             permissions -> when {
-        permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+        permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
             Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
             getLastLocation()
         }
-        permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+        permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
             Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
         } else -> {
             Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()

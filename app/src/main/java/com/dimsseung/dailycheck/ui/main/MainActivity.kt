@@ -1,10 +1,10 @@
-package com.dimsseung.dailycheck
+package com.dimsseung.dailycheck.ui.main
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.dimsseung.dailycheck.ui.HomeActivity
-import com.dimsseung.dailycheck.ui.LoginActivity
+import com.dimsseung.dailycheck.ui.home.HomeActivity
+import com.dimsseung.dailycheck.ui.auth.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {

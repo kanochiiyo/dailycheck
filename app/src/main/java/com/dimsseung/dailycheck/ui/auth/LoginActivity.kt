@@ -1,4 +1,4 @@
-package com.dimsseung.dailycheck.ui
+package com.dimsseung.dailycheck.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,11 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.dimsseung.dailycheck.R
+import com.dimsseung.dailycheck.ui.home.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
 class LoginActivity : AppCompatActivity() {
 

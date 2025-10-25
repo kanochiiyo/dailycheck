@@ -1,4 +1,4 @@
-package com.dimsseung.dailycheck.ui
+package com.dimsseung.dailycheck.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
