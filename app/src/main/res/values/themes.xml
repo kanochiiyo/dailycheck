@@ -3,7 +3,10 @@
     <style name="Base.Theme.DailyCheck" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:colorBackground">@color/beige_background</item>
 
+    </style>
     <style name="Theme.DailyCheck" parent="Base.Theme.DailyCheck" />
 </resources>
