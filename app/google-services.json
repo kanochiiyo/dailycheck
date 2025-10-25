@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "801556302990",
+    "project_id": "dailycheck-b40d6",
+    "storage_bucket": "dailycheck-b40d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801556302990:android:7d78fa12dd0f7cc748cddf",
+        "android_client_info": {
+          "package_name": "com.dimsseung.dailycheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA01aXiNuzKUzYVz1d71gGdOqmM1HSVBnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
