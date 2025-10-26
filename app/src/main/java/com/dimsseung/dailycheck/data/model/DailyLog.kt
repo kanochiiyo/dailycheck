@@ -9,7 +9,6 @@ import java.util.Date
 data class DailyLog(
     // Firestore properties
     @DocumentId
-    @get:Exclude // mengabaikan field id saat menyimpan data, tapi tetap mengisinya saat membaca data.
     var id: String? = null,
     val userId : String? = null,
 

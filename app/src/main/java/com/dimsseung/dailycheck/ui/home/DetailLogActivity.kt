@@ -76,20 +76,25 @@ class DetailLogActivity : AppCompatActivity() {
             fetchLogDetails(currentLogId!!)
         }
 
-        // edit
         btn_edit.setOnClickListener {
-            if (currentLog != null) {
-                val editIntent = Intent(this, AddLogActivity::class.java)
-                editIntent.putExtra("EDIT_LOG_ID", currentLog!!.id)
-                editIntent.putExtra("EDIT_TITLE", currentLog!!.title)
-                editIntent.putExtra("EDIT_CONTENT", currentLog!!.content)
-                    if (currentLog!!.location != null) {
-                        editIntent.putExtra("EDIT_LOCATION_LAT", currentLog!!.location!!.latitude)
-                        editIntent.putExtra("EDIT_LOCATION_LON", currentLog!!.location!!.longitude)
-                    }
+            // Pastikan currentLog dan ID-nya tidak null
+            if (currentLog != null && currentLog!!.id != null) {
+                // 1. Arahkan ke EditLogActivity
+                val editIntent = Intent(this, EditLogActivity::class.java)
+
+                // 2. Gunakan Kunci dari Companion Object
+                editIntent.putExtra(EditLogActivity.EXTRA_LOG_ID, currentLog!!.id)
+                editIntent.putExtra(EditLogActivity.EXTRA_TITLE, currentLog!!.title)
+                editIntent.putExtra(EditLogActivity.EXTRA_CONTENT, currentLog!!.content)
+
+                // 3. Kirim lokasi jika ada
+                if (currentLog!!.location != null) {
+                    editIntent.putExtra(EditLogActivity.EXTRA_LAT, currentLog!!.location!!.latitude)
+                    editIntent.putExtra(EditLogActivity.EXTRA_LON, currentLog!!.location!!.longitude)
+                }
                 startActivity(editIntent)
             } else {
-                Toast.makeText(this, "Data log belum dimuat, silakan tunggu...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Data log belum dimuat atau ID null, silakan tunggu...", Toast.LENGTH_SHORT).show()
             }
         }
         // delete
@@ -141,6 +146,13 @@ class DetailLogActivity : AppCompatActivity() {
                     // Konversi dokumen/data di Firebase ke objek DailyLog
                     val log = document.toObject(DailyLog::class.java)
                     if (log != null) {
+
+                        // ==================================================================
+                        // PERBAIKAN 2: Set ID secara manual (karena DailyLog.kt tidak punya @DocumentId)
+                        // ==================================================================
+                        log.id = document.id
+                        // ==================================================================
+
                         this.currentLog = log
                         populateUi(log)
                     } else {
@@ -170,14 +182,24 @@ class DetailLogActivity : AppCompatActivity() {
         } else {
             tv_detail_date.text = "Tanggal tidak tersedia"
         }
+
         if (log.location != null) {
+            // Format string dengan 6 angka di belakang koma
             val lat = String.format(Locale.US, "%.6f", log.location.latitude)
             val lon = String.format(Locale.US, "%.6f", log.location.longitude)
 
             tv_detail_location.text = "Lokasi: $lat, $lon"
-            tv_detail_location.visibility = View.VISIBLE
+            tv_detail_location.visibility = View.VISIBLE // Tampilkan TextView
         } else {
             tv_detail_location.visibility = View.GONE // Sembunyikan jika tidak ada lokasi
+        }
+    }
+
+    // PENTING: Panggil fetchLogDetails lagi saat kembali dari EditActivity
+    override fun onResume() {
+        super.onResume()
+        if (currentLogId != null) {
+            fetchLogDetails(currentLogId!!)
         }
     }
 }
