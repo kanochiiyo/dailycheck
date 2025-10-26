@@ -96,7 +96,7 @@ class HomeActivity : AppCompatActivity() {
                 // kosongkan biar data gak numpuk
                 logList.clear()
                 for (document in result) {
-                    // Konversi tiap data ke data model DailyLog
+                    // Konversi tiap data ke data model objek DailyLog
                     val log = document.toObject(DailyLog::class.java)
                     log.id = document.id
 

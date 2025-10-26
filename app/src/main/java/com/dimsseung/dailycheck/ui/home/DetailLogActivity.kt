@@ -33,7 +33,7 @@ class DetailLogActivity : AppCompatActivity() {
 
     // Data
     private var currentLogId: String? = null
-    private val TAG = "DetailLogActivity"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +59,8 @@ class DetailLogActivity : AppCompatActivity() {
 
         // Setup Toolbar
         setSupportActionBar(toolbar_detail)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // Tampilkan tombol back
 
-        // 1. Ambil LOG_ID dari Intent
+        // Ambil LOG_ID dari Intent
         currentLogId = intent.getStringExtra("LOG_ID")
 
         if (currentLogId == null) {
@@ -80,28 +79,27 @@ class DetailLogActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    // Konversi dokumen ke objek DailyLog
+                    // Konversi dokumen/data di Firebase ke objek DailyLog
                     val log = document.toObject(DailyLog::class.java)
                     if (log != null) {
-                        // 4. Tampilkan data ke UI
                         populateUi(log)
                     } else {
                         Toast.makeText(this, "Gagal mengurai data", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this, "Catatan tidak ditemukan", Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "No such document")
+                    Log.d("DETAIL LOG ERROR", "No such document")
                 }
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Gagal mengambil data: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.w(TAG, "Error getting document", e)
+                Log.w("DETAIL LOG ERROR", "Error getting document", e)
             }
     }
 
     private fun populateUi(log: DailyLog) {
         // Set judul toolbar
-        toolbar_detail.title = log.title ?: "Catatan"
+        toolbar_detail.title = "Detail Log"
 
         // Set data
         tv_detail_title.text = log.title ?: "Catatan"
@@ -112,10 +110,5 @@ class DetailLogActivity : AppCompatActivity() {
         } else {
             tv_detail_date.text = "Tanggal tidak tersedia"
         }
-    }
-    // Fungsi untuk tombol "back" di toolbar
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 }

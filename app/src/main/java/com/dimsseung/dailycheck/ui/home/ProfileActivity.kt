@@ -46,8 +46,7 @@ class ProfileActivity : AppCompatActivity() {
         // Setup Views
         setSupportActionBar(toolbar_profile)
 
-        // Retrieve user data from Firestore
-        tv_profile_email = findViewById(R.id.tv_profile_email)
+        // Ambil data dari Firebase
         val user = auth.currentUser
         user?.let {
             val userEmail = user.email
