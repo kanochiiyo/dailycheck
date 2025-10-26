@@ -3,7 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="beige_background">#F5F5DC</color>
-    <color name="beige_surface">#FFFFFF</color>
-    <color name="beige_primary">#D2B48C</color>
-    <color name="button_text">#000000</color>
+    <color name="beige_primary">#5D4037</color>
 </resources>

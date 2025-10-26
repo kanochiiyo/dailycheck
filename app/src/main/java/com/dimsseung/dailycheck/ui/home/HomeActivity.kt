@@ -38,6 +38,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var rv_logs: RecyclerView
     private lateinit var fab_add_log: FloatingActionButton
     private lateinit var toolbar_home: MaterialToolbar
+    private lateinit var tv_home_email:TextView
+    private lateinit var btn_profile: Button
 
     private var logList = mutableListOf<DailyLog>()
     private lateinit var logAdapter: LogAdapter
@@ -59,6 +61,13 @@ class HomeActivity : AppCompatActivity() {
         toolbar_home = findViewById(R.id.toolbar_home)
         rv_logs = findViewById(R.id.rv_logs)
         fab_add_log = findViewById(R.id.fab_add_log)
+        tv_home_email = findViewById(R.id.tv_home_email)
+        btn_profile = findViewById(R.id.btn_profile)
+        tv_home_email.text = auth.currentUser?.email
+
+        btn_profile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
 
         // Setup Views
         setSupportActionBar(toolbar_home)

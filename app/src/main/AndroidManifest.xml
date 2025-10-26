@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyCheck">
         <activity
+            android:name=".ui.home.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.DetailLogActivity"
             android:exported="false" />
         <activity

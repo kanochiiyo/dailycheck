@@ -7,5 +7,5 @@
     <string name="action_sign_in">Login</string>
     <string name="action_register">Register</string>
     <string name="action_logout">Logout</string>
-    <string name="action_add">Submit</string>
+    <string name="action_add">Tambah</string>
 </resources>
