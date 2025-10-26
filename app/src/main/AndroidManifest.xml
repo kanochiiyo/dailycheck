@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!--    kode berikut untuk permission location-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
-    <!--    fine location: titik tepatnya-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!--    opsional -->
-    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
+    <!-- kode berikut untuk permission location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- fine location: titik tepatnya -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- opsional -->
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyCheck">
-
+        <activity
+            android:name=".ui.home.DetailLogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AddLogActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="false" />
@@ -31,7 +33,6 @@
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true">
