@@ -1,7 +1,10 @@
 package com.dimsseung.dailycheck.ui.home
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -28,11 +31,13 @@ class DetailLogActivity : AppCompatActivity() {
     private lateinit var tv_detail_title: TextView
     private lateinit var tv_detail_date: TextView
     private lateinit var tv_detail_content: TextView
+    private lateinit var tv_detail_location: TextView
     private lateinit var btn_edit: Button
     private lateinit var btn_delete: Button
 
     // Data
     private var currentLogId: String? = null
+    private var currentLog: DailyLog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +59,7 @@ class DetailLogActivity : AppCompatActivity() {
         tv_detail_title = findViewById(R.id.tv_detail_title)
         tv_detail_content = findViewById(R.id.tv_detail_content)
         tv_detail_date = findViewById(R.id.tv_detail_date)
+        tv_detail_location = findViewById(R.id.tv_detail_location)
         btn_edit = findViewById(R.id.btn_edit)
         btn_delete = findViewById(R.id.btn_delete)
 
@@ -71,7 +77,60 @@ class DetailLogActivity : AppCompatActivity() {
         }
 
         // edit
+        btn_edit.setOnClickListener {
+            if (currentLog != null) {
+                val editIntent = Intent(this, AddLogActivity::class.java)
+                editIntent.putExtra("EDIT_LOG_ID", currentLog!!.id)
+                editIntent.putExtra("EDIT_TITLE", currentLog!!.title)
+                editIntent.putExtra("EDIT_CONTENT", currentLog!!.content)
+                    if (currentLog!!.location != null) {
+                        editIntent.putExtra("EDIT_LOCATION_LAT", currentLog!!.location!!.latitude)
+                        editIntent.putExtra("EDIT_LOCATION_LON", currentLog!!.location!!.longitude)
+                    }
+                startActivity(editIntent)
+            } else {
+                Toast.makeText(this, "Data log belum dimuat, silakan tunggu...", Toast.LENGTH_SHORT).show()
+            }
+        }
         // delete
+        btn_delete.setOnClickListener {
+            if (currentLogId != null) {
+                showDeleteConfirmationDialog(currentLogId!!)
+            } else {
+                Toast.makeText(this, "ID Log tidak valid", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(logId: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Hapus Log")
+        builder.setMessage("Apakah kamu yakin ingin menghapus catatan ini?")
+
+        // TOMBOL HAPUS
+        builder.setPositiveButton("Hapus") { dialog, which ->
+            deleteLogFromFirestore(logId)
+        }
+        // TOMBOL BATAL
+        builder.setNegativeButton("Batal") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        builder.create().show()
+    }
+
+    private fun deleteLogFromFirestore(logId: String) {
+        db.collection("logs").document(logId)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("DELETE LOG", "DocumentSnapshot successfully deleted!")
+                Toast.makeText(this, "Catatan berhasil dihapus", Toast.LENGTH_SHORT).show()
+                finish() // Tutup DetailActivity setelah berhasil hapus
+            }
+            .addOnFailureListener { e ->
+                Log.w("DELETE LOG", "Error deleting document", e)
+                Toast.makeText(this, "Gagal menghapus catatan: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun fetchLogDetails(currentLogId: String) {
@@ -82,6 +141,7 @@ class DetailLogActivity : AppCompatActivity() {
                     // Konversi dokumen/data di Firebase ke objek DailyLog
                     val log = document.toObject(DailyLog::class.java)
                     if (log != null) {
+                        this.currentLog = log
                         populateUi(log)
                     } else {
                         Toast.makeText(this, "Gagal mengurai data", Toast.LENGTH_SHORT).show()
@@ -109,6 +169,15 @@ class DetailLogActivity : AppCompatActivity() {
             tv_detail_date.text = formatter.format(log.createdAt)
         } else {
             tv_detail_date.text = "Tanggal tidak tersedia"
+        }
+        if (log.location != null) {
+            val lat = String.format(Locale.US, "%.6f", log.location.latitude)
+            val lon = String.format(Locale.US, "%.6f", log.location.longitude)
+
+            tv_detail_location.text = "Lokasi: $lat, $lon"
+            tv_detail_location.visibility = View.VISIBLE
+        } else {
+            tv_detail_location.visibility = View.GONE // Sembunyikan jika tidak ada lokasi
         }
     }
 }

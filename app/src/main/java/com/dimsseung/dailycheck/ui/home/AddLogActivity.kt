@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.SetOptions
 
 class AddLogActivity : AppCompatActivity() {
 
@@ -39,6 +40,9 @@ class AddLogActivity : AppCompatActivity() {
 
     // Utils
     private lateinit var locationHelper: LocationHelper
+    private var isEditMode = false
+    private var editLogId: String? = null
+    private var existingLocation: GeoPoint? = null
 
     private var last_location: Location? = null
 
@@ -71,6 +75,38 @@ class AddLogActivity : AppCompatActivity() {
         // Panggil locationHelper (minta permission, cek permission)
         setupLocationHelper()
 
+        if (intent.hasExtra("EDIT_LOG_ID")) {
+            isEditMode = true
+            editLogId = intent.getStringExtra("EDIT_LOG_ID")
+
+            // Ambil data dari intent
+            val title = intent.getStringExtra("EDIT_TITLE")
+            val content = intent.getStringExtra("EDIT_CONTENT")
+
+            // Set data ke UI
+            toolbar_add_log.title = "Edit Log"
+            et_log_title.setText(title)
+            et_log_content.setText(content)
+            btn_add_log.text = "Update Log"
+
+            // Cek jika ada lokasi lama
+            if (intent.hasExtra("EDIT_LOCATION_LAT")) {
+                val lat = intent.getDoubleExtra("EDIT_LOCATION_LAT", 0.0)
+                val lon = intent.getDoubleExtra("EDIT_LOCATION_LON", 0.0)
+                existingLocation = GeoPoint(lat, lon)
+
+                // Update UI lokasi
+                tv_location_status.text = "Lokasi: $lat, $lon"
+                btn_open_maps.isEnabled = true
+                btn_open_maps.visibility = View.VISIBLE
+            }
+
+        } else {
+            isEditMode = false
+            toolbar_add_log.title = "Tambah Log"
+            btn_add_log.text = "Simpan Log"
+        }
+
         // Set Listener untuk button
         btn_get_location.setOnClickListener {
             locationHelper.requestLocation()
@@ -79,7 +115,7 @@ class AddLogActivity : AppCompatActivity() {
             openMaps()
         }
         btn_add_log.setOnClickListener {
-            addLog()
+            saveOrUpdateLog()
         }
     }
     private fun setupLocationHelper() {
@@ -107,36 +143,34 @@ class AddLogActivity : AppCompatActivity() {
     }
 
     private fun openMaps() {
+        var locationToOpen: GeoPoint? = null
         if (last_location != null) {
-            // ambil dari firebase
-            val latitude = last_location!!.latitude
-            val longitude = last_location!!.longitude
+            locationToOpen = GeoPoint(last_location!!.latitude, last_location!!.longitude)
+        } else if (existingLocation != null) {
+            locationToOpen = existingLocation
+        }
+
+        if (locationToOpen != null) {
+            val latitude = locationToOpen.latitude
+            val longitude = locationToOpen.longitude
             val gmmIntentUri =
                 Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude(Lokasi Catatan)")
 
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
+            // ... (sisanya sudah benar) ...
             if (mapIntent.resolveActivity(packageManager) != null) {
                 startActivity(mapIntent)
             } else {
-                Toast.makeText(
-                    this,
-                    "Tidak ada aplikasi peta yang ditemukan",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this, "Tidak ada aplikasi peta", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(
-                this,
-                "Lokasi belum ditambahkan.",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Lokasi belum ditambahkan.", Toast.LENGTH_SHORT).show()
         }
     }
 
 
 
-    private fun addLog() {
+    private fun saveOrUpdateLog() {
         val userId = auth.currentUser?.uid
         val logTitle = et_log_title.text.toString().trim()
         val logContent = et_log_content.text.toString().trim()
@@ -151,30 +185,66 @@ class AddLogActivity : AppCompatActivity() {
             return
         }
         // Ambil dari Firebase
-        val location_data: GeoPoint? = if (last_location != null) {
-            GeoPoint(last_location!!.latitude, last_location!!.longitude)
+        val location_data: GeoPoint?
+        if (last_location != null) {
+            // User mengambil lokasi baru
+            location_data = GeoPoint(last_location!!.latitude, last_location!!.longitude)
+        } else if (isEditMode && existingLocation != null) {
+            // User mode edit dan tidak ambil lokasi baru, pakai lokasi lama
+            location_data = existingLocation
         } else {
-            null
+            // User mode tambah (tanpa lokasi) atau mode edit (dan menghapus lokasi)
+            location_data = null
         }
 
-        val newLog = DailyLog(
-            userId = userId,
-            title = logTitle.ifBlank { null },
-            content = logContent,
-            location = location_data
-        )
 
-        db.collection("logs")
-            .add(newLog)
-            .addOnSuccessListener { documentReference ->
-                Log.d("LOG ADDED", "DocumentSnapshot written with ID: ${documentReference.id}")
-                Toast.makeText(this, "Log berhasil disimpan", Toast.LENGTH_SHORT).show()
-                finish() // <-- PERBAIKAN: Tutup activity setelah sukses
+        if (isEditMode) {
+            // --- MODE UPDATE ---
+            val updates = mutableMapOf<String, Any?>()
+            updates["title"] = logTitle.ifBlank { null }
+            updates["content"] = logContent
+            updates["location"] = location_data
+            // gausah ganti created at sama userId
+
+            editLogId?.let { id ->
+                db.collection("logs").document(id)
+                    .update(updates)
+                    .addOnSuccessListener {
+                        Log.d("LOG UPDATED", "DocumentSnapshot updated with ID: $id")
+                        Toast.makeText(this, "Log berhasil diupdate", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Log gagal diupdate: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.w("LOG ERROR", "Error updating document", e)
+                        btn_add_log.isEnabled = true
+                    }
+            } ?: run {
+                // Ini akan dieksekusi jika editLogId ternyata null
+                Toast.makeText(this, "Error: ID Log tidak ditemukan saat update", Toast.LENGTH_SHORT).show()
+                btn_add_log.isEnabled = true
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Log gagal disimpan: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.w("LOG ERROR", "Error adding document", e)
-                btn_add_log.isEnabled = true // Hidupkan lagi tombolnya kalau gagal
-            }
+        } else {
+            // --- MODE ADD BARU ---
+            val newLog = DailyLog(
+                userId = userId,
+                title = logTitle.ifBlank { null },
+                content = logContent,
+                location = location_data
+            )
+            db.collection("logs")
+                .add(newLog)
+                .addOnSuccessListener { documentReference ->
+                    Log.d("LOG ADDED", "DocumentSnapshot written with ID: ${documentReference.id}")
+                    Toast.makeText(this, "Log berhasil disimpan", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Log gagal disimpan: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.w("LOG ERROR", "Error adding document", e)
+                    btn_add_log.isEnabled = true
+                }
+        }
+
     }
 }

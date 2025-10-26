@@ -45,6 +45,19 @@
                 android:textStyle="italic"
                 tools:text="26 Okt 2025, 14:30" />
 
+            <TextView
+                android:id="@+id/tv_detail_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="14sp"
+                app:drawableTint="?android:attr/textColorSecondary"
+                tools:text="Lokasi: -6.12345, 106.12345"
+                tools:visibility="visible" />
+
             <View
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
@@ -69,7 +82,7 @@
                 android:layout_marginTop="32dp"
                 android:backgroundTint="@color/beige_primary"
                 android:text="Edit"
-                app:cornerRadius="12dp"/>
+                app:cornerRadius="12dp" />
 
             <Button
                 android:id="@+id/btn_delete"
