@@ -189,7 +189,6 @@ class EditLogActivity : AppCompatActivity() {
             null
         }
 
-        // --- HANYA LOGIKA UPDATE ---
         val updates = mutableMapOf<String, Any?>()
         updates["title"] = logTitle.ifBlank { null }
         updates["content"] = logContent

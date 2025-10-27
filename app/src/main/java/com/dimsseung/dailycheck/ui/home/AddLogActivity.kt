@@ -70,12 +70,10 @@ class AddLogActivity : AppCompatActivity() {
         // Panggil locationHelper
         setupLocationHelper()
 
-        // --- BLOK LOGIKA EDIT DIHAPUS ---
         toolbar_add_log.title = "Tambah Log"
         btn_add_log.text = "Simpan Log"
         btn_open_maps.visibility = View.GONE
         btn_open_maps.isEnabled = false
-        // --- SELESAI ---
 
         // Set Listener untuk button
         btn_get_location.setOnClickListener {
@@ -131,7 +129,6 @@ class AddLogActivity : AppCompatActivity() {
         }
     }
 
-    // --- FUNGSI HANYA UNTUK SIMPAN LOG BARU ---
     private fun saveNewLog() {
         val userId = auth.currentUser?.uid
         val logTitle = et_log_title.text.toString().trim()

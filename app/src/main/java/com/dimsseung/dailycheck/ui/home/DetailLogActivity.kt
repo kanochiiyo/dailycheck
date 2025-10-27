@@ -147,11 +147,9 @@ class DetailLogActivity : AppCompatActivity() {
                     val log = document.toObject(DailyLog::class.java)
                     if (log != null) {
 
-                        // ==================================================================
-                        // PERBAIKAN 2: Set ID secara manual (karena DailyLog.kt tidak punya @DocumentId)
-                        // ==================================================================
+
                         log.id = document.id
-                        // ==================================================================
+
 
                         this.currentLog = log
                         populateUi(log)
@@ -195,7 +193,7 @@ class DetailLogActivity : AppCompatActivity() {
         }
     }
 
-    // PENTING: Panggil fetchLogDetails lagi saat kembali dari EditActivity
+    // Panggil fetchLogDetails lagi saat kembali dari EditActivity
     override fun onResume() {
         super.onResume()
         if (currentLogId != null) {
