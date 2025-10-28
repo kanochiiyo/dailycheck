@@ -36,6 +36,10 @@ class AddLogActivity : AppCompatActivity() {
     private lateinit var btn_get_location: Button
     private lateinit var btn_open_maps: Button
     private lateinit var tv_location_status: TextView
+    private lateinit var tvMoodHappy: TextView
+    private lateinit var tvMoodNeutral: TextView
+    private lateinit var tvMoodSad: TextView
+    private var selectedMood: String = "😐"
 
     // Utils
     private lateinit var locationHelper: LocationHelper
@@ -63,6 +67,18 @@ class AddLogActivity : AppCompatActivity() {
         btn_open_maps = findViewById(R.id.btn_open_maps)
         tv_location_status = findViewById(R.id.tv_location_status)
         toolbar_add_log = findViewById(R.id.toolbar_add_log)
+
+        tvMoodHappy = findViewById(R.id.tvMoodHappy)
+        tvMoodNeutral = findViewById(R.id.tvMoodNeutral)
+        tvMoodSad = findViewById(R.id.tvMoodSad)
+
+        // Set listener untuk setiap emoji
+        tvMoodHappy.setOnClickListener { updateMoodSelection("😄") }
+        tvMoodNeutral.setOnClickListener { updateMoodSelection("😐") }
+        tvMoodSad.setOnClickListener { updateMoodSelection("😢") }
+
+        // Set tampilan awal (Netral sebagai default)
+        updateMoodSelection(selectedMood)
 
         // Setup Toolbar
         setSupportActionBar(toolbar_add_log)
@@ -112,7 +128,6 @@ class AddLogActivity : AppCompatActivity() {
     }
 
     private fun openMaps() {
-        // Hanya buka 'last_location' karena ini mode Add
         if (last_location != null) {
             val latitude = last_location!!.latitude
             val longitude = last_location!!.longitude
@@ -126,6 +141,20 @@ class AddLogActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this, "Lokasi belum ditambahkan.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateMoodSelection(mood: String) {
+        selectedMood = mood
+
+        tvMoodHappy.alpha = 0.5f
+        tvMoodNeutral.alpha = 0.5f
+        tvMoodSad.alpha = 0.5f
+
+        when (mood) {
+            "😄" -> tvMoodHappy.alpha = 1.0f
+            "😐" -> tvMoodNeutral.alpha = 1.0f
+            "😢" -> tvMoodSad.alpha = 1.0f
         }
     }
 
@@ -153,12 +182,12 @@ class AddLogActivity : AppCompatActivity() {
 
         btn_add_log.isEnabled = false // Cegah double click
 
-        // --- HANYA LOGIKA ADD BARU ---
         val newLog = DailyLog(
             userId = userId,
             title = logTitle.ifBlank { null }, // Simpan null jika judul kosong
             content = logContent,
-            location = location_data
+            location = location_data,
+            mood = selectedMood
             // createdAt akan diisi otomatis oleh @ServerTimestamp
         )
 

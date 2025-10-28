@@ -27,36 +27,58 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <TextView
-                android:id="@+id/tv_detail_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:text="Judul Catatan Harian" />
-
-            <TextView
-                android:id="@+id/tv_detail_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start" android:textColor="?android:attr/textColorSecondary" android:textSize="14sp"
-                android:textStyle="italic"
-                tools:text="26 Okt 2025, 14:30" />
-
-            <TextView
-                android:id="@+id/tv_detail_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:drawablePadding="4dp"
+                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="14sp"
-                app:drawableTint="?android:attr/textColorSecondary"
-                tools:text="Lokasi: -6.12345, 106.12345"
-                tools:visibility="visible" />
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tv_detail_mood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="😐"
+                    android:textSize="30sp"
+                    android:layout_marginEnd="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_detail_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="Judul Catatan Harian" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        tools:text="26 Okt 2025, 14:30" />
+
+                </LinearLayout> </LinearLayout> <TextView
+            android:id="@+id/tv_detail_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"
+            app:drawableTint="?android:attr/textColorSecondary"
+            tools:text="Lokasi: -6.12345, 106.12345"
+            tools:visibility="visible" />
 
             <View
                 android:id="@+id/divider"
@@ -73,7 +95,9 @@
                 android:lineSpacingMultiplier="1.2"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
-                android:autoLink="web" android:textIsSelectable="true" tools:text="Ini adalah isi konten log..." />
+                android:autoLink="web"
+                android:textIsSelectable="true"
+                tools:text="Ini adalah isi konten log..." />
 
             <Button
                 android:id="@+id/btn_edit"

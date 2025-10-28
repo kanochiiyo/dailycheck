@@ -34,6 +34,7 @@ class DetailLogActivity : AppCompatActivity() {
     private lateinit var tv_detail_location: TextView
     private lateinit var btn_edit: Button
     private lateinit var btn_delete: Button
+    private lateinit var tv_detail_mood: TextView
 
     // Data
     private var currentLogId: String? = null
@@ -62,6 +63,7 @@ class DetailLogActivity : AppCompatActivity() {
         tv_detail_location = findViewById(R.id.tv_detail_location)
         btn_edit = findViewById(R.id.btn_edit)
         btn_delete = findViewById(R.id.btn_delete)
+        tv_detail_mood = findViewById(R.id.tv_detail_mood)
 
         // Setup Toolbar
         setSupportActionBar(toolbar_detail)
@@ -86,6 +88,7 @@ class DetailLogActivity : AppCompatActivity() {
                 editIntent.putExtra(EditLogActivity.EXTRA_LOG_ID, currentLog!!.id)
                 editIntent.putExtra(EditLogActivity.EXTRA_TITLE, currentLog!!.title)
                 editIntent.putExtra(EditLogActivity.EXTRA_CONTENT, currentLog!!.content)
+                editIntent.putExtra(EditLogActivity.EXTRA_MOOD, currentLog!!.mood)
 
                 // 3. Kirim lokasi jika ada
                 if (currentLog!!.location != null) {
@@ -174,6 +177,8 @@ class DetailLogActivity : AppCompatActivity() {
         // Set data
         tv_detail_title.text = log.title ?: "Catatan"
         tv_detail_content.text = log.content ?: ""
+        tv_detail_mood.text = log.mood ?: "😐"
+
         if (log.createdAt != null) {
             val formatter = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault())
             tv_detail_date.text = formatter.format(log.createdAt)

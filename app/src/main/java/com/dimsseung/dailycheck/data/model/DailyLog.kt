@@ -17,7 +17,7 @@ data class DailyLog(
     val content: String = "",
     @ServerTimestamp
     val createdAt: Date? = null,
-    val mood: String? = null,
+    val mood: String? = "😐",
     val tags: List<String>? = null,
     val isFavorite: Boolean = false,
     val location: GeoPoint? = null,

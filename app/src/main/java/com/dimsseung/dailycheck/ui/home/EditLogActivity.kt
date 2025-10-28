@@ -36,6 +36,11 @@ class EditLogActivity : AppCompatActivity() {
     private lateinit var btn_open_maps: Button
     private lateinit var tv_location_status: TextView
 
+    private lateinit var tvMoodHappy: TextView
+    private lateinit var tvMoodNeutral: TextView
+    private lateinit var tvMoodSad: TextView
+    private var selectedMood: String = "😐"
+
     // Utils
     private lateinit var locationHelper: LocationHelper
     private var currentLogId: String? = null
@@ -49,6 +54,7 @@ class EditLogActivity : AppCompatActivity() {
         const val EXTRA_CONTENT = "EXTRA_CONTENT"
         const val EXTRA_LAT = "EXTRA_LAT"
         const val EXTRA_LON = "EXTRA_LON"
+        const val EXTRA_MOOD = "EXTRA_MOOD"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,11 +74,19 @@ class EditLogActivity : AppCompatActivity() {
         // Inisialisasi views dari layout
         et_log_title = findViewById(R.id.et_log_title)
         et_log_content = findViewById(R.id.et_log_content)
-        btn_update_log = findViewById(R.id.btn_update_log) // ID Tombol baru
+        btn_update_log = findViewById(R.id.btn_update_log)
         btn_get_location = findViewById(R.id.btn_get_location)
         btn_open_maps = findViewById(R.id.btn_open_maps)
         tv_location_status = findViewById(R.id.tv_location_status)
-        toolbar_edit_log = findViewById(R.id.toolbar_edit_log) // ID Toolbar baru
+        toolbar_edit_log = findViewById(R.id.toolbar_edit_log)
+        tvMoodHappy = findViewById(R.id.tvMoodHappy)
+        tvMoodNeutral = findViewById(R.id.tvMoodNeutral)
+        tvMoodSad = findViewById(R.id.tvMoodSad)
+
+        tvMoodHappy.setOnClickListener { updateMoodSelection("😄") }
+        tvMoodNeutral.setOnClickListener { updateMoodSelection("😐") }
+        tvMoodSad.setOnClickListener { updateMoodSelection("😢") }
+
 
         // Setup Toolbar
         setSupportActionBar(toolbar_edit_log)
@@ -85,6 +99,9 @@ class EditLogActivity : AppCompatActivity() {
             currentLogId = intent.getStringExtra(EXTRA_LOG_ID)
             val title = intent.getStringExtra(EXTRA_TITLE)
             val content = intent.getStringExtra(EXTRA_CONTENT)
+            val mood = intent.getStringExtra(EXTRA_MOOD) ?: "😐"
+            selectedMood = mood
+            updateMoodSelection(selectedMood)
 
             // Set data ke UI
             et_log_title.setText(title)
@@ -168,6 +185,20 @@ class EditLogActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateMoodSelection(mood: String) {
+        selectedMood = mood
+
+        tvMoodHappy.alpha = 0.5f
+        tvMoodNeutral.alpha = 0.5f
+        tvMoodSad.alpha = 0.5f
+
+        when (mood) {
+            "😄" -> tvMoodHappy.alpha = 1.0f
+            "😐" -> tvMoodNeutral.alpha = 1.0f
+            "😢" -> tvMoodSad.alpha = 1.0f
+        }
+    }
+
     private fun updateLog() {
         val logTitle = et_log_title.text.toString().trim()
         val logContent = et_log_content.text.toString().trim()
@@ -193,6 +224,7 @@ class EditLogActivity : AppCompatActivity() {
         updates["title"] = logTitle.ifBlank { null }
         updates["content"] = logContent
         updates["location"] = location_data
+        updates["mood"] = selectedMood
         // Kita tidak update createdAt atau userId
 
         currentLogId?.let { id ->
